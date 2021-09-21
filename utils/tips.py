@@ -17,11 +17,19 @@ def show_differences(real_answer: str, user_answer: str) -> str:
 
     fixed_string = ""
     difference_iterator = difflib.ndiff(real_answer, user_answer)
+
+    previous_is_green = False
     for f in difference_iterator:
         if f[0] == " ":
             fixed_string += f[-1]
-        elif f[0] == "+":
-            fixed_string += f"{Fore.RED}{f[-1].capitalize()}{Style.RESET_ALL}"
+            previous_is_green = False
+        # this is the case when wrong word has been written
+        elif f[0] == "+" and not previous_is_green:
+            fixed_string += f"{Fore.RED}{f[-1]}{Style.RESET_ALL}"
+            previous_is_green = False
+        # this is the case when wrong word has been missed
         elif f[0] == "-":
-            fixed_string += f"{Fore.GREEN}{f[-1].capitalize()}{Style.RESET_ALL}"
+            fixed_string += f"{Fore.GREEN}{f[-1]}{Style.RESET_ALL}"
+            previous_is_green = True
+
     return fixed_string
