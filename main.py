@@ -45,7 +45,7 @@ def get_session(first_lang, second_lang, level):
 
         if compare_answers(second_lang, user_answer):
             second_lang = f"{Fore.GREEN}{second_lang}{Style.RESET_ALL}"
-            print(f"{{:<20}} >> ".format("Right answer!"), end="")
+            print(f"{{:<20}}\n".format("Right answer!"), end="")
         else:
             bad_answers_counter.update([f"{first_lang}->{second_lang}"])
             differences = show_differences(second_lang, user_answer)
