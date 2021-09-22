@@ -98,7 +98,7 @@ def main():
         get_session(first_lang, second_lang, level=level)
         print("Well, session is DONE then! Good luck!")
     except KeyboardInterrupt:
-        print("Stopping session softly.")
+        print("\nStopping session softly.")
 
 
 if __name__ == "__main__":
