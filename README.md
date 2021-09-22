@@ -11,6 +11,13 @@ A method demands to work passionately and regularly. The main idea of the method
   The natural way of learning by this technique reminds reinforcement learning which became one the most effective ways in ML. Just make the parallel between these both and find this as a way of learning if it is convenient for you!
 
 # How to use
+
+Session running:
+Install python on your computer: *https://www.python.org/*
+
+Command below will start the stage of setting parameters for your new session:
+`python3 main.py` 
+
 In the beginning, you will be asked to choose your first language (language you already know) and second language (language you are going to improve). Also, you will be asked to choose a level. just follow instructions:
 
 ```
