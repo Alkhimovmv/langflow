@@ -8,14 +8,15 @@ LangFlowHome
 <a href="https://www.qries.com/">
    <img alt="Qries" src="https://github.com/AlexKay28/langflow/blob/main/media/logo.png?raw=true" width="300" height="300">
 </a>
-<h5>main page</h5>
+<h5>main page answer</h5>
 {% endblock %}
 
 {% block body %}
   <h2>Translate: {{first_language}}</h2>
-  <form action="/practice" method="post">
-    <input type="string" name="second_language_answer", id="second_language_answer">
-  </form>
   <h2>Answer: {{second_language_answer}}</h2>
   <h2>Correct answer: {{second_language}}</h2>
+
+  <form method="get">
+    <input type="submit" class="btn btn-success" value="next">
+  </form>
 {% endblock %}
