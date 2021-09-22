@@ -22,22 +22,27 @@ AVAILABLE_LEVELS = {
 }
 
 
+def get_languages_pair(first_lang, second_lang, level):
+    """
+    Get pair from internal data
+    """
+    pairs = pd.read_csv(f"data/{level}.csv", usecols=[first_lang, second_lang])[
+        [first_lang, second_lang]
+    ].values
+    return pairs[np.random.choice(len(pairs))]
+
+
 def get_session(first_lang, second_lang, level):
     """
     Session itself. User choose session_learning_language parameter
     which defines which dataset to use for known and learning language
     """
-    # get access to data
-    pairs = pd.read_csv(f"data/{level}.csv", usecols=[first_lang, second_lang])[
-        [first_lang, second_lang]
-    ].values
-
     bad_answers_counter = Counter()
     actions_counter = 0
     user_answer = None
     while 1:
         actions_counter += 1
-        first_lang, second_lang = pairs[np.random.choice(len(pairs))]
+        first_lang, second_lang = get_languages_pair(first_lang, second_lang, level)
         phrase = f"{Fore.YELLOW}{first_lang}{Style.RESET_ALL}"
         print(f"{{:<20}} >> {{}}".format(f"Phrase #{actions_counter}", phrase))
         print(f"{{:<20}} >> ".format("Translate"), end="")
