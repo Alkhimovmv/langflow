@@ -4,13 +4,14 @@ import numpy as np
 import pandas as pd
 from colorama import Fore, Style
 
+from collections import Counter
 from utils.tips import show_differences
 from utils.comparing import compare_answers
 
 # Programm iterates over existed data and
 # shows you sentences which should be translated
 # by you
-SESSION_PHRASES_COUNTER = 25
+SESSION_PHRASES_COUNTER = 5
 LEARNING_LANGS = {
     1: "english",
     2: "russian",
@@ -31,6 +32,7 @@ def get_session(first_lang, second_lang, level):
         [first_lang, second_lang]
     ].values
 
+    bad_answers_counter = Counter()
     actions_counter = 0
     user_answer = None
     while 1:
@@ -40,18 +42,31 @@ def get_session(first_lang, second_lang, level):
         print(f"{{:<20}} >> {{}}".format(f"Phrase #{actions_counter}", phrase))
         print(f"{{:<20}} >> ".format("Translate"), end="")
         user_answer = input()
+
         if compare_answers(second_lang, user_answer):
             second_lang = f"{Fore.GREEN}{second_lang}{Style.RESET_ALL}"
             print(f"{{:<20}} >> ".format("Right answer!"), end="")
         else:
+            bad_answers_counter.update([f"{first_lang}->{second_lang}"])
             differences = show_differences(second_lang, user_answer)
             print(f"{{:<20}} >> {{}}".format("Bad answer", differences))
             print(f"{{:<20}} >> ".format("Repeat please"), end="")
             differences = show_differences(second_lang, input())
             print(f"{{:<20}} >> {{}}".format("Well!", differences))
         print()
+
         if actions_counter == SESSION_PHRASES_COUNTER:
-            print("Would you like to keep practicing?)")
+
+            # Show 5 most frequent errors
+            print("While practicing the most common mistakes:")
+            for bad_answer, n_errors in bad_answers_counter.most_common(5):
+                bad_answer_first, bad_answer_second = bad_answer.split("->")
+                print(
+                    f"({n_errors}) {Fore.YELLOW}{bad_answer_first}{Style.RESET_ALL} "
+                    + f": {Fore.GREEN}{bad_answer_second}{Style.RESET_ALL}"
+                )
+
+            print("\nWould you like to keep practicing?)")
             print("Press y/N")
             if input() != "y":
                 return 0
@@ -59,7 +74,10 @@ def get_session(first_lang, second_lang, level):
             actions_counter = 0
 
 
-if __name__ == "__main__":
+def main():
+    """
+    Welcomes user and launch session with choosed setting
+    """
     print(
         f"""\
     Hello! Choose language pair you want to learn!
@@ -81,3 +99,7 @@ if __name__ == "__main__":
         print("Well, session is DONE then! Good luck!")
     except KeyboardInterrupt:
         print("Stopping session softly.")
+
+
+if __name__ == "__main__":
+    main()
