@@ -1,4 +1,6 @@
 
-![logo](https://user-images.githubusercontent.com/55444371/134302001-6395a35f-f92c-4698-b742-a25f9d7efaeb.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/55444371/134302141-d272c398-fc11-449b-88e9-ac92823a7b86.png" />
+</p>
 
-the project for the most brutal and effective language learning technique 
+*- "The project for the most brutal and effective language learning technique" (c) Alex Kay*
