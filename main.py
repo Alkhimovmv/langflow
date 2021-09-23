@@ -11,7 +11,7 @@ from utils.comparing import compare_answers
 # Programm iterates over existed data and
 # shows you sentences which should be translated
 # by you
-SESSION_PHRASES_COUNTER = 5
+SESSION_PHRASES_COUNTER = 15
 LEARNING_LANGS = {
     1: "english",
     2: "russian",
@@ -22,17 +22,17 @@ AVAILABLE_LEVELS = {
 }
 
 
-def get_languages_pair(first_lang, second_lang, level):
+def get_languages_pair(known_lang, learn_lang, level):
     """
     Get pair from internal data
     """
-    pairs = pd.read_csv(f"data/{level}.csv", usecols=[first_lang, second_lang])[
-        [first_lang, second_lang]
+    pairs = pd.read_csv(f"data/{level}.csv", usecols=[known_lang, learn_lang])[
+        [known_lang, learn_lang]
     ].values
     return pairs[np.random.choice(len(pairs))]
 
 
-def get_session(first_lang, second_lang, level):
+def get_session(known_lang, learn_lang, level):
     """
     Session itself. User choose session_learning_language parameter
     which defines which dataset to use for known and learning language
@@ -42,7 +42,7 @@ def get_session(first_lang, second_lang, level):
     user_answer = None
     while 1:
         actions_counter += 1
-        first_lang, second_lang = get_languages_pair(first_lang, second_lang, level)
+        first_lang, second_lang = get_languages_pair(known_lang, learn_lang, level)
         phrase = f"{Fore.YELLOW}{first_lang}{Style.RESET_ALL}"
         print(f"{{:<20}} >> {{}}".format(f"Phrase #{actions_counter}", phrase))
         print(f"{{:<20}} >> ".format("Translate"), end="")
