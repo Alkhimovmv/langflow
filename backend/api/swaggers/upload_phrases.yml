@@ -1,0 +1,50 @@
+Answer collection endpoint. Gets user's answer and makes analysis of
+its correctness. Patch data in database recording the learning process.
+This endpoint utilized ML approach for answer correctness comparing.
+---
+description: Client side interaction with server
+consumes:
+- multipart/form-data
+produces:
+- string
+parameters:
+  - in: header
+    name: headers_params
+    required: true
+    schema:
+      id: question_api_header
+      required:
+        - session_token
+      properties:
+        session_token:
+          type: string
+          description: user's session token
+
+  - in: body
+    name: body_params
+    required: true
+    schema:
+      id: upload_phrases_api_body
+      required:
+        - file
+      properties:
+        file:
+          type: string
+          description: The phrases for base
+
+responses:
+  500:
+      description: The error on the server side
+      schema:
+        properties:
+          status:
+            type: integer
+            description: Status code
+          message:
+            type: string
+            description: Short occured error summary
+          traceback:
+            type: string
+            description: Full occured error summary
+  200:
+      description: Message about success

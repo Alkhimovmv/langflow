@@ -10,12 +10,17 @@ class DatabaseConnector:
         - load data from db
         - update data in db
 
+    :param dbname: the name of the connected database
+    :param username: the database user name
+    :param password: the database user password
+    :param host: the database host name
+    :param port: the database port number
     :param conn: database connection object
     :param engine: connection to defined database
     :param cur: cursor to db
     """
 
-    def __init__(self, dbname, username, password, host, port):
+    def __init__(self, dbname: str, username: str, password: str, host: str, port: int):
         self.dbname = dbname
         self.username = username
         self.password = password

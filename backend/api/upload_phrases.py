@@ -2,10 +2,14 @@ import json
 import pandas as pd
 import traceback
 
+from flask import request, jsonify
+from flasgger.utils import swag_from
+
 from . import api, request, jsonify, session
 
 
 @api.route("/phrases/file", methods=["POST"])
+@swag_from("swaggers/upload_phrases.yml")
 def upload_phrases():
     """
     Upload phrases to database using csv file
@@ -25,9 +29,8 @@ def upload_phrases():
 
         # work with provided file
         phrases = pd.read_csv(phrases_file)
-        if session.upload_phrases_to_db(phrases):
-            raise Exception("Uploading phrases dataframe to database was failed!")
-
+        session.upload_phrases_to_db(phrases)
+        
         return "Phrases was uploaded to database SUCCESSFULLY!"
     except Exception as e:
         return jsonify(
