@@ -43,5 +43,8 @@ responses:
         id: authorization_api_200
         properties:
           status:
+            type: integer
+            description: Status code
+          message:
             type: string
-            description: Status description
+            description: Message from backend

@@ -30,6 +30,9 @@ responses:
       schema:
         id: result_api_200
         properties:
+          status:
+            type: integer
+            description: Status code
           slangs_counts:
             type: object
             description: The asked target languages counts
