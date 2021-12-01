@@ -10,7 +10,6 @@ parameters:
     name: body
     required: true
     schema:
-      id: authorization_api_body
       properties:
         username:
           type: string

@@ -11,12 +11,12 @@ parameters:
   - in: header
     name: session_token
     required: true
+    type: string
     description: user's session token
   - in: body
     name: body_params
     required: true
     schema:
-      id: answer_api_body
       properties:
         question_token:
           type: string
