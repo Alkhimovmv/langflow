@@ -1,0 +1,39 @@
+$this: '.header';
+
+#{$this} {
+    &_logo {
+        font-size: 36px;
+        font-weight: 700;
+        color: #023866;
+        text-decoration: none;
+        
+        &:hover {
+            color: #023866;
+        }
+
+        &:active {
+            color:#023866;
+        }
+
+        &-img {
+            margin-right: 15px;
+        }
+    }
+    
+    &_nav-link {
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        color: #73738D;
+        padding: 4px 14px;
+
+        &-active {
+            border: 2px solid #023866;
+            border-radius: 20px;
+
+            &:hover {
+                color: #73738D;
+            }
+        }
+    }
+}

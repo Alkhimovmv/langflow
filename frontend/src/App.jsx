@@ -1,17 +1,13 @@
-import React from "react"
-import CurrentPage from "./components/CurrentPage/CurrentPage"
-import Header from "./components/Header/Header"
+import { Component } from 'react'
+import CurrentPage from './components/CurrentPage/CurrentPage'
 
-import "./App.css"
-
-class App extends React.Component {
+class App extends Component {
   render() {
     return (
       <>
-        <Header/>
         <CurrentPage/>
       </>
-    );
+    )
   }
 }
 

@@ -1,6 +1,6 @@
-import avatar_alexkay from "../../images/avatar_alexkay.png"
-import avatar_alkhimovmv from "../../images/avatar_alkhimovmv.png"
-import "./ourteam.scss"
+import avatar_alexkay from '../../images/avatar_alexkay.png'
+import avatar_alkhimovmv from '../../images/avatar_alkhimovmv.png'
+import './ourteam.scss'
 
 const OurTeam = (): JSX.Element => {
     return (
