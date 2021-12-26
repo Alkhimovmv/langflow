@@ -83,6 +83,16 @@ def get_similarity(vec1: np.ndarray, vec2: np.ndarray, metric: str = "cosine") -
     raise ValueError(f"Unknown distance metric <{metric}>")
 
 
+def get_phrase_shift_vector(language, phrase1: str, phrase2: str) -> list:
+    """
+    Get shift vector between phrases.
+    """
+    language_model = load_language_model(language)
+    phrase1_vec = get_phrase_vector(language_model, tokenize_answer(phrase1))
+    phrase2_vec = get_phrase_vector(language_model, tokenize_answer(phrase2))
+    return phrase2_vec - phrase1_vec
+
+
 def get_equality_rate(language_model, real_answer: str, user_answer: str) -> float:
     """
     Get equality_rate between users

@@ -20,12 +20,12 @@ class DatabaseConnector:
     :param cur: cursor to db
     """
 
-    def __init__(self, dbname: str, username: str, password: str, host: str, port: str):
+    def __init__(self, dbname: str, username: str, password: str, host: str, port: int):
         self.dbname = dbname
         self.username = username
         self.password = password
         self.host = host
-        self.port = int(port)
+        self.port = port
 
         self.conn = psycopg2.connect(
             dbname=self.dbname,

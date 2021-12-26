@@ -6,13 +6,17 @@ from collections import Counter
 from typing import Tuple
 from sqlalchemy import and_, or_, not_
 
+import json
+import requests
+
 from dbase import db
 from dbase.users import UserAuthorized, UserAnon
 from dbase.actions import Action
 from dbase.phrases import Phrase
-from dbase.database_connector import DatabaseConnector
 
 N_MAX_USERS = 25
+
+RL_SERVICE_URL = os.environ.get("RL_SERVICE_URL")
 
 
 def generate_random_token(type: str) -> str:
@@ -187,8 +191,22 @@ class SessionController:
         else:
             phrases_id = db.session.query(Phrase.id).distinct()
 
-        # normalize pair
-        phrase_id = int(np.random.choice([r.id for r in phrases_id]))
+        # RL WORKS HERE
+        # phrase_id = int(np.random.choice([r.id for r in phrases_id]))
+        response = json.loads(
+            requests.post(
+                RL_SERVICE_URL + "/get_pair",
+                json={
+                    "level": level,
+                    "second_language": second_language,
+                    "uuid": uuid,
+                },
+            ).text
+        )
+        phrase_id = int(response["phrase_id"])
+
+        # if phrase_id not in [r.id for r in phrases_id]:
+        #     raise ValueError(f"Wrong phrase id: {phrases_id}")
 
         flang = str(
             db.session.query(getattr(Phrase, first_language))
@@ -319,31 +337,3 @@ class SessionController:
             average_score,
             message,
         )
-
-    def upload_phrases_to_db(self, dataframe: pd.DataFrame):
-        """
-        Upload provided data to database replacing the previous one
-
-        :param dataframe: pandas dataframe to upload to base
-        """
-        # check needed columns
-        assert all(
-            [
-                col in dataframe.columns
-                for col in ["level", "english", "russian", "ukrainian", "french"]
-            ]
-        )
-
-        # upload data to base
-        dbconnector = DatabaseConnector(
-            "langflow", "postgres", 123456, "localhost", 5432
-        )
-        df.to_sql(
-            "phrases",
-            dbconnector.engine,
-            schema="public",
-            if_exists="replace",
-            index=False,
-            method="multi",
-        )
-        return 0
