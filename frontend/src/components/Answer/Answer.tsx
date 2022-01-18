@@ -83,7 +83,7 @@ const Answer = (props: TAnswerProps) => {
   const renderPrevProps = (): JSX.Element => {
     return (
       <>
-        <div>
+        <div className="first-table">
           {!isEmpty(firstPrevProps) ?
           renderTable(firstPrevProps)
           : null }

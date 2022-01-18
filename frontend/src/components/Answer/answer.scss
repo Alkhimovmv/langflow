@@ -16,6 +16,12 @@
 
 .third-table {opacity: 0.3;}
 
+.first-table,.second-table,.third-table {
+  & .table_line {
+    border-bottom: 2px solid #73738D;
+  }
+}
+
 .table-header {
   font-size: 18px;
   font-weight: 700;
