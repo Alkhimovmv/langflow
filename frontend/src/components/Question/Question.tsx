@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react'
 
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import Box from '@material-ui/core/Box'
 import GoPractice from '../GoPractice/GoPractice'
+import Answer from '../Answer/Answer'
 import { makeStyles } from '@material-ui/styles'
+import { TAnswerData } from '../Answer/Answer'
 
 import api from '../../utils/api'
 
@@ -44,11 +44,7 @@ const Question = () => {
   const [question, setQuestion] = useState<string>('')
   const [question_token, setQuestionToken] = useState<string>('')
   const [user_answer, setUserAnswer] = useState<string>('')
-  const [isAnswer, setIsAnswer] = useState<boolean>(false)
-  const [answer, setAnswer] = useState<string>('')
-  const [is_equal, setIsEqual] = useState<string>('')
-  const [score, setScore] = useState<string>('')
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [answerData, setAnswerData] = useState<TAnswerData>({})
   const classes = useStyles()
 
   useEffect(() => {
@@ -65,7 +61,8 @@ const Question = () => {
     }, 100)
   }, [])
 
-  const handleAnswerSubmit = async () => {  
+  const handleAnswerSubmit = async (e: any) => {
+    e.preventDefault()  
     const data = {
         question_token: question_token,
         user_answer: user_answer
@@ -73,15 +70,26 @@ const Question = () => {
     const session_token = window.localStorage.getItem('session_token')
     api.patch('/answer', data, { headers: { session_token: `${session_token}`}})
       .then((response: any) => {
-        setAnswer(response.data.answer)
-        setIsEqual(response.data.is_equal)
-        setScore(response.data.score)
-        setIsLoading(false)
+        const answerData = {
+          answer: response.data.answer,
+          user_answer: user_answer,
+          score: response.data.score.toFixed(2),
+          question: response.data.question
+        }
+        setAnswerData(answerData)
       })
       .catch((error) => {
           console.log(error);
       })
-    setIsAnswer(true)
+    const questionConfig = {
+      first_language: window.localStorage.getItem('firstLanguage'),
+      second_language: window.localStorage.getItem('secondLanguage'),
+      level: window.localStorage.getItem('level'),
+    }
+    const response: any = await api.post('/question', questionConfig, { headers: { session_token: `${session_token}` } })
+    setQuestion(response.data.question)
+    setQuestionToken(response.data.question_token)
+    setUserAnswer('')
   }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,9 +100,8 @@ const Question = () => {
   const renderQuestion = (): JSX.Element => {    
     return (
       <>
-        <GoPractice />
-        <div className="vh-90">
-            <div className="centered-element">
+        <div className="vh-90 question_container">
+            <div >
                 <h2 className='question'>{question}</h2>
                 <form onSubmit={handleAnswerSubmit}>
                     <div className="d-flex mb-3">
@@ -104,8 +111,10 @@ const Question = () => {
                           placeholder="Enter text"
                           autoComplete="off"
                           onChange={handleInputChange}
+                          value={user_answer}
+                          autoFocus
                         />
-                        <Button type="submit" variant="contained" className={classes.button} onClick={handleAnswerSubmit}>Enter</Button>
+                        <Button variant="contained" className={classes.button} onClick={handleAnswerSubmit}>Enter</Button>
                     </div>
                 </form>
             </div>
@@ -113,57 +122,14 @@ const Question = () => {
         </>
     )
   }
-
-  const renderAnswer = (): JSX.Element => {
-    return (
-      <>
-        <GoPractice />
-        <div className="vh-90">
-            <div className="centered-element w-100">
-                  { !isLoading ? 
-                  <table className="custom-table">
-                    <tbody>
-                    <tr>
-                        <td className="table-header">Translate:</td>
-                        <td className="table-text table-text_translate">{question}</td>
-                    </tr>
-                    <tr>
-                        <td className="table-header ">Answer:</td>
-                        <td className="table-text">{user_answer}</td>
-                    </tr>
-                    <tr>
-                        <td className="table-header">Correct answer:</td>
-                        <td className="table-text table-text_correct-answer">{answer}</td>
-                    </tr>
-                    <tr>
-                        <td className="table-header">Is equal:</td>
-                        <td className="table-text table-text_correct-answer">{is_equal}</td>
-                    </tr>
-                    <tr>
-                        <td className="table-header">Score:</td>
-                        <td className="table-text table-text_correct-answer">{score}</td>
-                    </tr>
-                    </tbody>
-                </table> : 
-                renderSpinner()}
-                <form>
-                    <Button type="submit" variant="contained" className={classes.button} onClick={handleAnswerSubmit}>Next</Button>
-                </form>
-            </div>
-        </div>
-      </>
-    )
-  }
-
-  const renderSpinner = (): JSX.Element => {
-    return (
-      <Box className="justify-content-center p-5" sx={{ display: 'flex' }}>
-        <CircularProgress />
-      </Box>
-    )
-  }
   
-  return !isAnswer ? renderQuestion() : renderAnswer() 
+  return ( 
+    <>
+      <GoPractice />
+      {renderQuestion()}
+      <Answer answerData={answerData} />
+    </>
+  )
 }
 
 export default Question
