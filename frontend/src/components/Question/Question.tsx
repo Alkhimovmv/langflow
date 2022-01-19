@@ -108,7 +108,7 @@ const Question = () => {
                         <TextField
                           className={classes.textField}
                           fullWidth
-                          placeholder="Enter text"
+                          placeholder="Enter translation"
                           autoComplete="off"
                           onChange={handleInputChange}
                           value={user_answer}
