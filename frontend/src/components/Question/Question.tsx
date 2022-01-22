@@ -1,6 +1,6 @@
 import './question.scss'
 
-import { useState, useEffect } from 'react'
+import { FormEvent, MouseEvent, useState, useEffect } from 'react'
 
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
@@ -61,14 +61,19 @@ const Question = () => {
     }, 100)
   }, [])
 
-  const handleAnswerSubmit = async (e: any) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement> | MouseEvent<HTMLElement>) => {
     e.preventDefault()  
     const data = {
         question_token: question_token,
         user_answer: user_answer
     }
+    const questionConfig = {
+      first_language: window.localStorage.getItem('firstLanguage'),
+      second_language: window.localStorage.getItem('secondLanguage'),
+      level: window.localStorage.getItem('level'),
+    }
     const session_token = window.localStorage.getItem('session_token')
-    api.patch('/answer', data, { headers: { session_token: `${session_token}`}})
+    await api.patch('/answer', data, { headers: { session_token: `${session_token}`}})
       .then((response: any) => {
         const answerData = {
           answer: response.data.answer,
@@ -78,18 +83,20 @@ const Question = () => {
         }
         setAnswerData(answerData)
       })
+      .then(async() => {
+        await api.post('/question', questionConfig, { headers: { session_token: `${session_token}` } })
+        .then((response: any) => {
+          setQuestion(response.data.question)
+          setQuestionToken(response.data.question_token)
+          setUserAnswer('')
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+      })
       .catch((error) => {
           console.log(error);
       })
-    const questionConfig = {
-      first_language: window.localStorage.getItem('firstLanguage'),
-      second_language: window.localStorage.getItem('secondLanguage'),
-      level: window.localStorage.getItem('level'),
-    }
-    const response: any = await api.post('/question', questionConfig, { headers: { session_token: `${session_token}` } })
-    setQuestion(response.data.question)
-    setQuestionToken(response.data.question_token)
-    setUserAnswer('')
   }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,7 +110,7 @@ const Question = () => {
         <div className="vh-90 question_container">
             <div >
                 <h2 className='question'>{question}</h2>
-                <form onSubmit={handleAnswerSubmit}>
+                <form onSubmit={handleSubmit}>
                     <div className="d-flex mb-3">
                         <TextField
                           className={classes.textField}
@@ -114,7 +121,7 @@ const Question = () => {
                           value={user_answer}
                           autoFocus
                         />
-                        <Button variant="contained" className={classes.button} onClick={handleAnswerSubmit}>Enter</Button>
+                        <Button variant="contained" className={classes.button} onClick={handleSubmit}>Enter</Button>
                     </div>
                 </form>
             </div>

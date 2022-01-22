@@ -21,12 +21,12 @@ const usePrevious = <T extends unknown>(value: T): T | undefined => {
   return ref.current;
 }
 
-const useHasChanged= (val: any) => {
+const useHasChanged= (val: TAnswerData) => {
   const prevVal = usePrevious(val)
   return prevVal !== val
 }
 
-function isEmpty(obj: any) {
+function isEmpty(obj?: TAnswerData) {
   for (let key in obj) {
     return false;
   }
@@ -36,8 +36,6 @@ function isEmpty(obj: any) {
 
 
 const Answer = (props: TAnswerProps) => {
-  console.log(props);
-  
   const prevProps = usePrevious(props.answerData)
   const hasChangedPrevProps = useHasChanged(props.answerData)
   const [thirdPrevProps, setThirdPrevProps] = useState<TAnswerData>({})
@@ -58,8 +56,8 @@ const Answer = (props: TAnswerProps) => {
         <table className="prev-table">
           <tbody>
           <tr>
-            <td className="table-header">Score</td>
-            <td className="table-header">Summary</td>
+            <td className="table-header"></td>
+            <td className="table-header"></td>
           </tr>
           <tr>
             <td></td>
