@@ -11,6 +11,21 @@ import { TAnswerData } from '../Answer/Answer'
 
 import api from '../../utils/api'
 
+export type TAnswerResponse = {
+  data: {
+    answer: string,
+    score: number,
+    question: string
+  }
+}
+
+export type TQuestionResponse = {
+  data: {
+    question: string,
+    question_token: string
+  }
+}
+
 const useStyles = makeStyles({
     button: {
         '&.MuiButton-root': { 
@@ -73,30 +88,18 @@ const Question = () => {
       level: window.localStorage.getItem('level'),
     }
     const session_token = window.localStorage.getItem('session_token')
-    await api.patch('/answer', data, { headers: { session_token: `${session_token}`}})
-      .then((response: any) => {
-        const answerData = {
-          answer: response.data.answer,
-          user_answer: user_answer,
-          score: response.data.score.toFixed(2),
-          question: response.data.question
-        }
-        setAnswerData(answerData)
-      })
-      .then(async() => {
-        await api.post('/question', questionConfig, { headers: { session_token: `${session_token}` } })
-        .then((response: any) => {
-          setQuestion(response.data.question)
-          setQuestionToken(response.data.question_token)
-          setUserAnswer('')
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-      })
-      .catch((error) => {
-          console.log(error);
-      })
+    const answerResponse: TAnswerResponse = await api.patch('/answer', data, { headers: { session_token: `${session_token}`}})
+    const answerData = {
+      answer: answerResponse.data.answer,
+      user_answer: user_answer,
+      score: answerResponse.data.score.toFixed(2),
+      question: answerResponse.data.question
+    }
+    setAnswerData(answerData)
+    const questionResponse: TQuestionResponse = await api.post('/question', questionConfig, { headers: { session_token: `${session_token}` } })
+    setQuestion(questionResponse.data.question)
+    setQuestionToken(questionResponse.data.question_token)
+    setUserAnswer('')
   }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
