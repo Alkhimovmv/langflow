@@ -14,9 +14,18 @@ from dbase.users import UserAuthorized, UserAnon
 from dbase.actions import Action
 from dbase.phrases import Phrase
 
+from utils.facade_api import FacadeAPI
+
+# max user limit
 N_MAX_USERS = 25
 
+# set other services connection
 RL_SERVICE_URL = os.environ.get("RL_SERVICE_URL")
+NLP_SERVICE_URL = os.environ.get("NLP_SERVICE_URL")
+facade_api = FacadeAPI(
+    rl_url=RL_SERVICE_URL,
+    nlp_url=NLP_SERVICE_URL,
+)
 
 
 def generate_random_token(type: str) -> str:
@@ -193,16 +202,7 @@ class SessionController:
 
         # RL WORKS HERE
         # phrase_id = int(np.random.choice([r.id for r in phrases_id]))
-        response = json.loads(
-            requests.post(
-                RL_SERVICE_URL + "/get_pair",
-                json={
-                    "level": level,
-                    "second_language": second_language,
-                    "uuid": uuid,
-                },
-            ).text
-        )
+        response = facade_api.rl_get_pair(level, second_language, uuid)
         phrase_id = int(response["phrase_id"])
 
         # if phrase_id not in [r.id for r in phrases_id]:
@@ -285,6 +285,13 @@ class SessionController:
         slang_phrase = getattr(phrases, slang)
 
         return flang, flang_phrase, slang, slang_phrase
+
+    @staticmethod
+    def compare_answers(language, phrase1, phrase2):
+        """
+        Compare phrases using NLP service.
+        """
+        return facade_api.nlp_get_similarity(language, phrase1, phrase2)
 
     def record_users_result(self, uuid: str, quid: str, user_answer: str, score: float):
         """

@@ -14,7 +14,7 @@ services:
           - 6767:6767
           - 6769:6769
         network_mode: host
-        command: python app.py
+        command: python -u app.py
 
     rl_module:
         build:
@@ -30,7 +30,23 @@ services:
           - 6767:6767
           - 6768:6768
         network_mode: host
-        command: python app.py
+        command: python -u app.py
+
+    nlp_module:
+        build:
+          context: ./nlp_module
+          dockerfile: Dockerfile
+        image: langflow_nlp:v0.1
+        container_name: langflow_application_nlp
+        depends_on:
+          - backend
+        volumes:
+          - ./nlp_module:/nlp_module
+        ports:
+          - 6767:6767
+          - 6769:6769
+        network_mode: host
+        command: python -u app.py
 
     frontend:
         build:
@@ -75,6 +91,8 @@ services:
         - postgres
       networks:
         - postgres-net
+      logging:
+        driver: none
       restart: unless-stopped
 
 networks:
