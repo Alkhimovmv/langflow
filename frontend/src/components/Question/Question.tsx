@@ -70,7 +70,7 @@ const Question = () => {
         level: window.localStorage.getItem('level'),
       }
       const session_token = window.localStorage.getItem('session_token')
-      const response: any = await api.post('/question', questionConfig, { headers: { session_token: `${session_token}` } })
+      const response: TQuestionResponse = await api.post('/question', questionConfig, { headers: { session_token: `${session_token}` } })
       setQuestion(response.data.question)
       setQuestionToken(response.data.question_token)
     }, 100)
@@ -109,27 +109,25 @@ const Question = () => {
 
   const renderQuestion = (): JSX.Element => {    
     return (
-      <>
-        <div className="vh-90 question_container">
-            <div >
-                <h2 className='question'>{question}</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="d-flex mb-3">
-                        <TextField
-                          className={classes.textField}
-                          fullWidth
-                          placeholder="Enter translation"
-                          autoComplete="off"
-                          onChange={handleInputChange}
-                          value={user_answer}
-                          autoFocus
-                        />
-                        <Button variant="contained" className={classes.button} onClick={handleSubmit}>Enter</Button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        </>
+      <div className="vh-90 question_container">
+          <div >
+              <h2 className='question'>{question}</h2>
+              <form onSubmit={handleSubmit}>
+                  <div className="d-flex mb-3">
+                      <TextField
+                        className={classes.textField}
+                        fullWidth
+                        placeholder="Enter translation"
+                        autoComplete="off"
+                        onChange={handleInputChange}
+                        value={user_answer}
+                        autoFocus
+                      />
+                      <Button variant="contained" className={classes.button} onClick={handleSubmit}>Enter</Button>
+                  </div>
+              </form>
+          </div>
+      </div>
     )
   }
   

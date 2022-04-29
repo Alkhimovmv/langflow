@@ -7,7 +7,6 @@ const register = async (username, email, password) => {
       email,
       password,
     })
-    console.log(response);
     if (response.data.status !== 200) {
       throw new Error(response.data.message)
     }

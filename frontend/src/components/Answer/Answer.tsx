@@ -1,6 +1,9 @@
 import './answer.scss'
 
 import { useEffect, useRef, useState } from 'react'
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 
 export type TAnswerData = {
   answer?: string,
@@ -33,24 +36,41 @@ function isEmpty(obj?: TAnswerData) {
   return true;
 }
 
-
+function threshold(score: number) {
+  return score <= 0.5 ? 'error' : score > 0.5 && score <= 0.75 ? 'warning' : 'success'
+}
 
 const Answer = (props: TAnswerProps) => {
   const prevProps = usePrevious(props.answerData)
   const hasChangedPrevProps = useHasChanged(props.answerData)
-  const [thirdPrevProps, setThirdPrevProps] = useState<TAnswerData>({})
+  const [thirdPrevProps, setThirdPrevProps] = useState<TAnswerData[]>([])
   const [secondPrevProps, setSecondPrevProps] = useState<TAnswerData>({})
   const [firstPrevProps, setFirstPrevProps] = useState<TAnswerData>({})
+
+  let color: "error" | "warning" | "success" | "inherit" | "primary" | "secondary" | "info" | undefined
+  let textColor: string
+  let icon
   
   useEffect(() => {    
-    if (hasChangedPrevProps) {      
-      secondPrevProps && setThirdPrevProps(secondPrevProps)
+    if (hasChangedPrevProps) {
+      !isEmpty(secondPrevProps) && thirdPrevProps.unshift(secondPrevProps)
       firstPrevProps && setSecondPrevProps(firstPrevProps)
       prevProps && setFirstPrevProps(prevProps)
     }
-  }, [hasChangedPrevProps, secondPrevProps, firstPrevProps, prevProps])
+  }, [hasChangedPrevProps])
 
   const renderTable = (prevProps: TAnswerData): JSX.Element => {
+    switch (threshold(Number(prevProps.score))) {
+      case 'error':
+        icon = <img src="https://img.icons8.com/ios-filled/40/73738D/delete-sign--v1.png"/>
+        break
+      case 'warning':
+        icon = <img src="https://img.icons8.com/material/40/73738D/exclamation-mark.png"/>
+        break
+      case 'success':
+        icon = <img src="https://img.icons8.com/external-becris-lineal-becris/40/73738D/external-check-mintab-for-ios-becris-lineal-becris-1.png"/>
+        break
+    }
     return (
       <>
         <table className="prev-table">
@@ -60,16 +80,36 @@ const Answer = (props: TAnswerProps) => {
             <td className="table-header"></td>
           </tr>
           <tr>
-            <td></td>
-            <td className="table-text table-text_question">{prevProps.question}</td>
+            <td rowSpan={3} style={{paddingRight: '4px'}}>
+              <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+              <CircularProgress size={95} value={Number(prevProps.score)*100} variant="determinate" color="inherit" style={{backgroundColor: '#F5F4F4', borderRadius: '50%', opacity: 0.5}} />
+                <Box
+                  sx={{
+                    top: 0,
+                    left: 0,
+                    bottom: 0,
+                    right: 0,
+                    position: 'absolute',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Typography
+                    variant="h4"
+                    component="div"
+                    color="text.secondary"
+                  >{prevProps.score}</Typography>
+                </Box>
+              </Box>
+            </td>
+            <td className="table-text_block">
+              <div className="table-text table-text_question">{prevProps.question}</div>
+              <div className="table-text table-text_correct-answer">{prevProps.answer}</div>
+            </td>
           </tr>
           <tr>
-            <td className="table-text table-text_score">{prevProps.score}</td>
-            <td className="table-text table-text_answer">{prevProps.user_answer}</td>
-          </tr>
-          <tr>
-            <td></td>
-            <td className="table-text table-text_correct-answer">{prevProps.answer}</td>
+            <td className="table-text table-text_answer">{icon} {prevProps.user_answer}</td>
           </tr>
           </tbody>
         </table> 
@@ -91,13 +131,31 @@ const Answer = (props: TAnswerProps) => {
           renderTable(secondPrevProps)
           : null }
         </div>
-        <div className="third-table">
-          {!isEmpty(thirdPrevProps) ?
-          renderTable(thirdPrevProps)
-          : null }
-        </div>
+        {thirdPrevProps.map((item, key) => (
+          <div className="third-table">
+            {renderTable(item)}
+          </div>
+        ))}
       </>
     )
+  }
+
+  switch (threshold(Number(props.answerData.score))) {
+    case 'error':
+      color = "error"
+      textColor = '#d32f2f'
+      icon = <img src="https://img.icons8.com/ios-filled/40/d32f2f/delete-sign--v1.png"/>
+      break
+    case 'warning':
+      color = "warning"
+      textColor = '#ED6C02'
+      icon = <img src="https://img.icons8.com/material/40/ED6C02/exclamation-mark.png"/>
+      break
+    case 'success':
+      color = "success"
+      textColor = '#2e7d32'
+      icon = <img src="https://img.icons8.com/external-becris-lineal-becris/40/2e7d32/external-check-mintab-for-ios-becris-lineal-becris-1.png"/>
+      break
   }
   
   return (
@@ -109,19 +167,39 @@ const Answer = (props: TAnswerProps) => {
                 <tbody>
                 <tr>
                   <td className="table-header">Score</td>
-                  <td className="table-header">Summary</td>
+                  <td className="table-header progress-header">Progress</td>
                 </tr>
                 <tr>
-                  <td></td>
-                  <td className="table-text table-text_question">{props.answerData.question}</td>
+                  <td rowSpan={3} style={{paddingRight: '4px'}}>
+                    <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+                    <CircularProgress size={95} value={Number(props.answerData.score)*100} variant="determinate" color={color} style={{backgroundColor: '#F5F4F4', borderRadius: '50%'}} />
+                      <Box
+                        sx={{
+                          top: 0,
+                          left: 0,
+                          bottom: 0,
+                          right: 0,
+                          position: 'absolute',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Typography
+                          variant="h4"
+                          component="div"
+                          color={textColor}
+                        >{props.answerData.score}</Typography>
+                      </Box>
+                    </Box>
+                  </td>
+                  <td className="table-text_block">
+                    <div className="table-text table-text_question">{props.answerData.question}</div>
+                    <div className="table-text table-text_correct-answer">{props.answerData.answer}</div>
+                  </td>
                 </tr>
                 <tr>
-                  <td className="table-text table-text_score">{props.answerData.score}</td>
-                  <td className="table-text table-text_answer">{props.answerData.user_answer}</td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td className="table-text table-text_correct-answer">{props.answerData.answer}</td>
+                  <td className="table-text table-text_answer">{icon} {props.answerData.user_answer}</td>
                 </tr>
                 </tbody>
               </table> 
