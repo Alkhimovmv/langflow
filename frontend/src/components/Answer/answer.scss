@@ -10,6 +10,9 @@
     &_score {
       font-weight: bold;
     }
+    &_question {
+      font-weight: bold;
+    }
   }
 }
 .second-table {opacity: 0.7;}
@@ -28,6 +31,9 @@
   color: #73738D;
   min-width: 150px;
   text-align: left;
+  &.progress-header {
+    padding-left: 50px;
+  }
 }
 
 .table-text {
@@ -41,8 +47,11 @@
   &_question {
     font-weight: bold;
   }
-  &_answer {
-    font-weight: bold;
+  &_block {
+    width: 100%;
+    background-color: #C4C4C421;
+    border-radius: 20px;
+    padding-left: 50px;
   }
 }
 
