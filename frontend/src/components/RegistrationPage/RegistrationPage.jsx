@@ -58,6 +58,9 @@ const RegistrationPage = (props) => {
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [usernameError, setUsernameError] = useState('')
+    const [emailError, setEmailError] = useState('')
+    const [passwordError, setPasswordError] = useState('')
     const classes = useStyles()
     const dispatch = useDispatch()
 
@@ -76,9 +79,29 @@ const RegistrationPage = (props) => {
         setPassword(password)
     };
 
+    const validateUsername = () => {
+        if (username.length === 0) setUsernameError('Username field must not be empty')
+        else setUsernameError('')
+    }
+
+    const validateEmail = () => {
+        if (email.length === 0) setEmailError('Email field must not be empty')
+        else setEmailError('')
+    }
+
+    const validatePassword = () => {
+        if (password.length <= 8) setPasswordError('Password must be at least 8 characters')
+        else setPasswordError('')
+    }
+
     const handleRegister = (e) => {
         e.preventDefault()
 
+        validateUsername()
+        validateEmail()
+        validatePassword()
+
+        if (username.length === 0 || email.length === 0 || password.length <= 8) return
 
         dispatch(register(username, email, password))
             .then(() => {
@@ -119,6 +142,9 @@ const RegistrationPage = (props) => {
                                     autoComplete="username"
                                     value={username}
                                     onChange={onChangeUsername}
+                                    error={usernameError}
+                                    helperText={usernameError}
+                                    onBlur={validateUsername}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sx={{mt: 4}}>
@@ -132,6 +158,9 @@ const RegistrationPage = (props) => {
                                     autoComplete="email"
                                     value={email}
                                     onChange={onChangeEmail}
+                                    error={emailError}
+                                    helperText={emailError}
+                                    onBlur={validateEmail}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sx={{mt: 4}}>
@@ -146,6 +175,9 @@ const RegistrationPage = (props) => {
                                     autoComplete="new-password"
                                     value={password}
                                     onChange={onChangePassword}
+                                    error={passwordError}
+                                    helperText={passwordError}
+                                    onBlur={validatePassword}
                                     />
                                 </Grid>
                             </Grid>
