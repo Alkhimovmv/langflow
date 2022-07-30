@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import { useTranslation } from 'react-i18next'
 
 export type TAnswerData = {
   answer?: string,
@@ -41,6 +42,8 @@ function threshold(score: number) {
 }
 
 const Answer = (props: TAnswerProps) => {
+  const { t } = useTranslation()
+
   const prevProps = usePrevious(props.answerData)
   const hasChangedPrevProps = useHasChanged(props.answerData)
   const [thirdPrevProps, setThirdPrevProps] = useState<TAnswerData[]>([])
@@ -166,8 +169,8 @@ const Answer = (props: TAnswerProps) => {
               <table className="custom-table">
                 <tbody>
                 <tr>
-                  <td className="table-header">Score</td>
-                  <td className="table-header progress-header">Progress</td>
+                  <td className="table-header">{t("score")}</td>
+                  <td className="table-header progress-header">{t("progress")}</td>
                 </tr>
                 <tr>
                   <td rowSpan={3} style={{paddingRight: '4px'}}>

@@ -4,6 +4,8 @@ import { FormEvent, MouseEvent, useState, useEffect } from 'react'
 
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import { useTranslation } from 'react-i18next'
+
 import GoPractice from '../GoPractice/GoPractice'
 import Answer from '../Answer/Answer'
 import { makeStyles } from '@material-ui/styles'
@@ -56,6 +58,8 @@ const useStyles = makeStyles({
 })
 
 const Question = () => {
+  const { t } = useTranslation()
+
   const [question, setQuestion] = useState<string>('')
   const [question_token, setQuestionToken] = useState<string>('')
   const [user_answer, setUserAnswer] = useState<string>('')
@@ -117,13 +121,13 @@ const Question = () => {
                       <TextField
                         className={classes.textField}
                         fullWidth
-                        placeholder="Enter translation"
+                        placeholder={t("Enter translation")}
                         autoComplete="off"
                         onChange={handleInputChange}
                         value={user_answer}
                         autoFocus
                       />
-                      <Button variant="contained" className={classes.button} onClick={handleSubmit}>Enter</Button>
+                      <Button variant="contained" className={classes.button} onClick={handleSubmit}>{t("enter")}</Button>
                   </div>
               </form>
           </div>

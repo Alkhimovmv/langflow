@@ -11,6 +11,7 @@ import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import Container from '@material-ui/core/Container'
 import { makeStyles } from '@material-ui/styles'
+import { useTranslation } from 'react-i18next'
 
 import { login } from '../actions/auth'
 
@@ -55,6 +56,8 @@ const useStyles = makeStyles({
 })
 
 const LoginPage = (props) => {
+    const { t } = useTranslation()
+
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [usernameError, setUsernameError] = useState('')
@@ -114,7 +117,7 @@ const LoginPage = (props) => {
                     }}
                     >
                         <Typography className={classes.header} component="h1" variant="h5">
-                            Sign in
+                            {t("signin")}
                         </Typography>
                         <Box component="form" noValidate onSubmit={handleLogin}>
                             <Grid container>
@@ -124,7 +127,7 @@ const LoginPage = (props) => {
                                     required
                                     fullWidth
                                     id="username"
-                                    label="Username"
+                                    label={t("username")}
                                     name="username"
                                     autoComplete="username"
                                     value={username}
@@ -140,7 +143,7 @@ const LoginPage = (props) => {
                                     required
                                     fullWidth
                                     name="password"
-                                    label="Password"
+                                    label={t("password")}
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
@@ -153,12 +156,12 @@ const LoginPage = (props) => {
                                 </Grid>
                             </Grid>
                             <Button type="submit" fullWidth variant="contained" className={classes.button}>
-                                Sign In
+                                {t("signin")}
                             </Button>
                             <Grid container justifyContent="flex-end">
                                 <Grid item style={{margin: '10px auto'}}>
                                     <Link href="/registration" variant="body2" className={classes.link} >
-                                    New user? Sign up to create your account
+                                        {t("New user? Sign up to create your account")}
                                     </Link>
                                 </Grid>
                             </Grid>
