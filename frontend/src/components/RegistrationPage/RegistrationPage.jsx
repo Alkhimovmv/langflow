@@ -10,6 +10,7 @@ import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import Container from '@material-ui/core/Container'
 import { makeStyles } from '@material-ui/styles'
+import { useTranslation } from 'react-i18next'
 
 import { register } from '../actions/auth'
 
@@ -54,6 +55,8 @@ const useStyles = makeStyles({
 })
 
 const RegistrationPage = (props) => {
+    const { t } = useTranslation()
+
     const form = useRef()
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
@@ -127,7 +130,7 @@ const RegistrationPage = (props) => {
                     }}
                     >
                         <Typography className={classes.header} component="h1" variant="h5">
-                            Sign up
+                            {t("signup")}
                         </Typography>
                         <Box component="form" noValidate onSubmit={handleRegister} ref={form} sx={{ mt: 3 }}>
                             <Grid container>
@@ -137,7 +140,7 @@ const RegistrationPage = (props) => {
                                     required
                                     fullWidth
                                     id="username"
-                                    label="Username"
+                                    label={t("username")}
                                     name="username"
                                     autoComplete="username"
                                     value={username}
@@ -153,7 +156,7 @@ const RegistrationPage = (props) => {
                                     required
                                     fullWidth
                                     id="email"
-                                    label="Email Address"
+                                    label={t("emailaddress")}
                                     name="email"
                                     autoComplete="email"
                                     value={email}
@@ -169,7 +172,7 @@ const RegistrationPage = (props) => {
                                     required
                                     fullWidth
                                     name="password"
-                                    label="Password"
+                                    label={t("password")}
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
@@ -182,12 +185,12 @@ const RegistrationPage = (props) => {
                                 </Grid>
                             </Grid>
                             <Button type="submit" fullWidth variant="contained" className={classes.button} >
-                                Sign Up
+                                {t("signup")}
                             </Button>
                             <Grid container justifyContent="flex-end">
                                 <Grid item style={{margin: '10px auto'}}>
                                     <Link href="/login" variant="body2" className={classes.link} >
-                                    Already have an account? Sign in
+                                        {t("Already have an account? Sign in")}
                                     </Link>
                                 </Grid>
                             </Grid>

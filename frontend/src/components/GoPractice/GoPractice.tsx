@@ -6,6 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import FormControl from '@material-ui/core/FormControl'
 import Select, { SelectChangeEvent } from '@material-ui/core/Select'
 import { makeStyles } from '@material-ui/styles'
+import { useTranslation } from 'react-i18next'
 
 import api from '../../utils/api'
 
@@ -62,6 +63,8 @@ const useStyles = makeStyles({
 })
 
 const GoPractice = (): JSX.Element => {
+    const { t } = useTranslation()
+
     const [firstLanguage, setFirstLanguage] = useState<string>(window.localStorage.getItem('firstLanguage') || 'english')
     const [secondLanguage, setSecondLanguage] = useState<string>(window.localStorage.getItem('secondLanguage') || 'russian')
     const [level, setLevel] = useState<string>(window.localStorage.getItem('level') || '1')
@@ -133,9 +136,9 @@ const GoPractice = (): JSX.Element => {
 
     return (
         <div className="p-2 text-center">
-            {window.location.pathname !== '/question' && <div className={classes.header}>Learn now</div>}
+            {window.location.pathname !== '/question' && <div className={classes.header}>{t("learnnow")}</div>}
             <FormControl sx={{ m: '14px'}} className={classes.formControl}>
-                <InputLabel id="first-language-label" className={classes.inputLabel}>From</InputLabel>
+                <InputLabel id="first-language-label" className={classes.inputLabel}>{t("from")}</InputLabel>
                 <Select
                 labelId="first-language-label"
                 id="first_language"
@@ -147,14 +150,14 @@ const GoPractice = (): JSX.Element => {
                 value={firstLanguage}
                 className={classes.select}
                 >
-                <MenuItem className={classes.menuItem} value={'english'}>English</MenuItem>
-                <MenuItem className={classes.menuItem} value={'russian'}>Russian</MenuItem>
-                <MenuItem className={classes.menuItem} value={'french'}>French</MenuItem>
-                <MenuItem className={classes.menuItem} value={'ukrainian'}>Ukrainian</MenuItem>
+                <MenuItem className={classes.menuItem} value={'english'}>{t("english")}</MenuItem>
+                <MenuItem className={classes.menuItem} value={'russian'}>{t("russian")}</MenuItem>
+                <MenuItem className={classes.menuItem} value={'french'}>{t("french")}</MenuItem>
+                <MenuItem className={classes.menuItem} value={'ukrainian'}>{t("ukrainian")}</MenuItem>
                 </Select>
             </FormControl>
             <FormControl sx={{ m: '14px' }} className={classes.formControl}>
-                <InputLabel id="second-language-label" className={classes.inputLabel}>To</InputLabel>
+                <InputLabel id="second-language-label" className={classes.inputLabel}>{t("to")}</InputLabel>
                 <Select
                 labelId="second-language-label"
                 id="second_language"
@@ -166,14 +169,14 @@ const GoPractice = (): JSX.Element => {
                 value={secondLanguage}
                 className={classes.select}
                 >
-                <MenuItem className={classes.menuItem} value={'english'}>English</MenuItem>
-                <MenuItem className={classes.menuItem} value={'russian'}>Russian</MenuItem>
-                <MenuItem className={classes.menuItem} value={'french'}>French</MenuItem>
-                <MenuItem className={classes.menuItem} value={'ukrainian'}>Ukrainian</MenuItem>
+                <MenuItem className={classes.menuItem} value={'english'}>{t("english")}</MenuItem>
+                <MenuItem className={classes.menuItem} value={'russian'}>{t("russian")}</MenuItem>
+                <MenuItem className={classes.menuItem} value={'french'}>{t("french")}</MenuItem>
+                <MenuItem className={classes.menuItem} value={'ukrainian'}>{t("ukrainian")}</MenuItem>
                 </Select>
             </FormControl>
             <FormControl sx={{ m: '14px' }} className={classes.formControl}>
-                <InputLabel id="level-label" className={classes.inputLabel}>Difficulty</InputLabel>
+                <InputLabel id="level-label" className={classes.inputLabel}>{t("difficulty")}</InputLabel>
                 <Select
                 labelId="level-label"
                 id="level"
@@ -185,12 +188,12 @@ const GoPractice = (): JSX.Element => {
                 onChange={handleChangeLevel}
                 className={classes.select}
                 >
-                <MenuItem className={classes.menuItem} value={0}>All levels</MenuItem>
-                <MenuItem className={classes.menuItem} value={1}>Easy</MenuItem>
-                <MenuItem className={classes.menuItem} value={2}>Medium</MenuItem>
+                <MenuItem className={classes.menuItem} value={0}>{t("alllevels")}</MenuItem>
+                <MenuItem className={classes.menuItem} value={1}>{t("easy")}</MenuItem>
+                <MenuItem className={classes.menuItem} value={2}>{t("medium")}</MenuItem>
                 </Select>
             </FormControl>
-            <Button type="submit" variant="contained" className={classes.button} onClick={handleClick}>GO</Button>
+            <Button type="submit" variant="contained" className={classes.button} onClick={handleClick}>{t("go")}</Button>
         </div>
     );
 }

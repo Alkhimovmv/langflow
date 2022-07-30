@@ -1,14 +1,17 @@
 import avatar_alexkay from '../../images/avatar_alexkay.png'
 import avatar_alkhimovmv from '../../images/avatar_alkhimovmv.png'
 import './ourteam.scss'
+import { useTranslation } from 'react-i18next'
 
 const OurTeam = (): JSX.Element => {
+    const { t } = useTranslation()
+
     return (
         <div className="py-5 our_team">
             <div className="container">
                 <div className="row justify-content-center mb-4">
                     <div className="col-md-7 text-center">
-                        <h1 className="mb-3">Experienced & Professional Team</h1>
+                        <h1 className="mb-3">{t("Experienced & Professional Team")}</h1>
                     </div>
                 </div>
                 <div className="row justify-content-around">
@@ -19,9 +22,9 @@ const OurTeam = (): JSX.Element => {
                             </div>
                             <div className="col-md-12 text-center">
                                 <div className="pt-2">
-                                    <h5 className="mt-4 font-weight-medium mb-0">Alexander Kaigorodov</h5>
-                                    <h6 className="subtitle mb-3">DS / MLOps / NLP engineer</h6>
-                                    <p>The project for the most brutal and effective language learning technique.</p>
+                                    <h5 className="mt-4 font-weight-medium mb-0">{t("Alexander Kaigorodov")}</h5>
+                                    <h6 className="subtitle mb-3">{t("DS / MLOps / NLP engineer")}</h6>
+                                    <p>{t("The project for the most brutal and effective language learning technique.")}</p>
                                 </div>
                             </div>
                         </div>
@@ -33,9 +36,9 @@ const OurTeam = (): JSX.Element => {
                             </div>
                             <div className="col-md-12 text-center">
                                 <div className="pt-2">
-                                    <h5 className="mt-4 font-weight-medium mb-0">Maxim Alkhimov</h5>
-                                    <h6 className="subtitle mb-3">Frontend Developer</h6>
-                                    <p>A year from now you will wish you had started to learn a language today.</p>
+                                    <h5 className="mt-4 font-weight-medium mb-0">{t("Maxim Alkhimov")}</h5>
+                                    <h6 className="subtitle mb-3">{t("Frontend Developer")}</h6>
+                                    <p>{t("A year from now you will wish you had started to learn a language today.")}</p>
                                 </div>
                             </div>
                         </div>
