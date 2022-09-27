@@ -1,30 +1,42 @@
+from xml.dom import ValidationErr
+import torch
+import yaml
 import numpy as np
+import onnxruntime as ort
 
-EXPLORATION_RATE = 0.65
+from functools import reduce
+from torch.nn.functional import softmax
 
 
 class Agent:
-    def __init__(self):
-        pass
+    def __init__(
+        self,
+        config_path: str = "onnx_model/onnx_model.yaml",
+        model_path: str = "onnx_model/onnx_model.onnx",
+    ):
+        with open(config_path, "r") as f:
+            self.config = yaml.safe_load(f)
+        self.ort_session = ort.InferenceSession(model_path)
 
-    def __call__(self, current_state, policy_type="e_greedy"):
-        phrase_ids_in_base = [i[0] for i in current_state]
-        phrase_probs = [i[1] for i in current_state]
+    @staticmethod
+    def _trajectory_fromula(prev, next, agg_type="subs"):
+        if agg_type == "subs":
+            return next - prev
+        if agg_type == "subs_with_discount":
+            return (next - prev) * 0.9
 
-        if policy_type == "greedy":
-            choosed_phrase = self.greedy_policy(phrase_probs)
-        elif policy_type == "e_greedy":
-            choosed_phrase = self.e_greedy_policy(phrase_probs)
-        else:
-            raise KeyError(f"Unknown policy type <{policy_type}>")
+    def _get_action(self, obs):
+        action, _ = self.ort_session.run(None, {"input": [obs]})
+        res = torch.normal(mean=torch.tensor(action))[0].tolist()
+        return res
 
-        return phrase_ids_in_base[choosed_phrase]
+    def __call__(self, previous_questions_vecs):
+        prev_trajectory = reduce(
+            lambda p1, p2: self._trajectory_fromula(
+                p1, p2, agg_type=self.config["agg_type"]
+            ),
+            np.array(previous_questions_vecs),
+        )
 
-    def greedy_policy(self, action_space) -> int:
-        return np.argmax(action_space)
-
-    def e_greedy_policy(self, action_space) -> int:
-        if np.random.random() < EXPLORATION_RATE:
-            return np.random.choice(len(action_space))
-        else:
-            return np.argmax(action_space)
+        prev_trajectory = np.array(prev_trajectory).astype(np.float32)
+        return self._get_action(prev_trajectory)

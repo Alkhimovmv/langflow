@@ -5,23 +5,18 @@ import pandas as pd
 from collections import Counter
 from typing import Tuple
 from sqlalchemy import and_, or_, not_
-
-import json
-import requests
+from sqlalchemy import text as sql_text_query
 
 from dbase import db
-from dbase.users import UserAuthorized, UserAnon
 from dbase.actions import Action
-from dbase.phrases import Phrase
+from dbase.phrases import Phrase, PhraseVector
+from dbase.users import UserAuthorized, UserAnon, UserVector
 
 from utils.facade_api import FacadeAPI
-
-# max user limit
-N_MAX_USERS = int(os.environ.get("N_MAX_USERS"))
+from utils.faiss import get_closest_vector_knn
+from utils.constants import RL_SERVICE_URL, NLP_SERVICE_URL, N_MAX_USERS
 
 # set other services connection
-RL_SERVICE_URL = os.environ.get("RL_SERVICE_URL")
-NLP_SERVICE_URL = os.environ.get("NLP_SERVICE_URL")
 facade_api = FacadeAPI(
     rl_url=RL_SERVICE_URL,
     nlp_url=NLP_SERVICE_URL,
@@ -44,6 +39,14 @@ def generate_random_token(type: str) -> str:
         raise KeyError(f"Unknown encoding type <{type}>")
 
 
+def chec_if_token_uuid(string_to_check: str) -> bool:
+    try:
+        check = string_to_check == str(uuid.UUID(string_to_check))
+    except ValueError:
+        return False
+    return check
+
+
 class SessionController:
     """
     Session object which contains session parameters
@@ -55,16 +58,6 @@ class SessionController:
 
     def __init__(self, n_jobs: int = -1):
         self.n_jobs = n_jobs
-
-    def is_user(self, uuid: str) -> bool:
-        """
-        Check particular user existance
-
-        :param uuid: the string with uuid to look for in db
-
-        :return: boolean value was user created or not
-        """
-        return uuid in self.db.users_uuid_list
 
     @staticmethod
     def create_user(username: str, password: str, email: bool) -> Tuple[str, bool]:
@@ -99,6 +92,16 @@ class SessionController:
         db.session.add(user)
         db.session.commit()
 
+        user_vec = UserVector(
+            uuid=uuid_generated,
+            english=np.random.rand(8),
+            french=np.random.rand(8),
+            russian=np.random.rand(8),
+            ukrainian=np.random.rand(8),
+        )
+        db.session.add(user_vec)
+        db.session.commit()
+
         return 200, f"User <{username}> was created!"
 
     @staticmethod
@@ -125,6 +128,16 @@ class SessionController:
                 session_token=session_token_generated,
             )
             db.session.add(user)
+            db.session.commit()
+
+            user_vec = UserVector(
+                uuid=uuid_generated,
+                english=np.random.rand(8),
+                french=np.random.rand(8),
+                russian=np.random.rand(8),
+                ukrainian=np.random.rand(8),
+            )
+            db.session.add(user_vec)
             db.session.commit()
         else:
             # find existed user and set session token
@@ -183,7 +196,11 @@ class SessionController:
 
     @staticmethod
     def select_question(
-        uuid: str, first_language: str, second_language: str, level: int
+        uuid: str,
+        first_language: str,
+        second_language: str,
+        level: int,
+        n_previous_phrases: int = 5,
     ) -> Tuple[str, str, str]:
         """
         Smart question selection
@@ -196,20 +213,41 @@ class SessionController:
         :return: tuple which consts of question id, and phrase on two languages
         """
 
-        if level > 0:
-            phrases_id = (
-                db.session.query(Phrase.id).filter(Phrase.level == level).distinct()
+        # check if uuid is correct, to avoid sql injection
+        assert chec_if_token_uuid(uuid), f"UUID is bad: '{uuid}'"
+
+        previous_phrases_vecs_query = sql_text_query(
+            f"""
+            with phrases_ids as (
+                SELECT phrase_id
+                FROM actions
+                WHERE uuid = '{uuid}'
+                ORDER BY action_date DESC
+                LIMIT {n_previous_phrases}
             )
+
+            SELECT t2.{second_language} as vecs
+            FROM phrases_ids as t1
+            JOIN phrases_vec as t2
+            ON t1.phrase_id = t2.id
+            """
+        )
+        query_iterable = db.engine.execute(previous_phrases_vecs_query).all()
+        prev_vecs = [row["vecs"] for row in query_iterable]
+
+        if len(prev_vecs):
+            # RL WORKS HERE
+            predicted_vec = facade_api.rl_get_next_vec(prev_vecs)
+
+            next_ids, next_dists = get_closest_vector_knn(
+                second_language, predicted_vec
+            )
+            choices = np.random.multinomial(
+                1, (next_dists.max() - next_dists) / next_dists.sum()
+            )
+            phrase_id = int(next_ids[choices.argmax()])
         else:
-            phrases_id = db.session.query(Phrase.id).distinct()
-
-        # RL WORKS HERE
-        # phrase_id = int(np.random.choice([r.id for r in phrases_id]))
-        response = facade_api.rl_get_pair(level, second_language, uuid)
-        phrase_id = int(response["phrase_id"])
-
-        # if phrase_id not in [r.id for r in phrases_id]:
-        #     raise ValueError(f"Wrong phrase id: {phrases_id}")
+            phrase_id = 1
 
         flang = str(
             db.session.query(getattr(Phrase, first_language))
@@ -288,7 +326,7 @@ class SessionController:
         flang_phrase = getattr(phrases, flang)
         slang_phrase = getattr(phrases, slang)
 
-        return flang, flang_phrase, slang, slang_phrase
+        return phrase_id, flang, flang_phrase, slang, slang_phrase
 
     @staticmethod
     def compare_answers(language, phrase1, phrase2):
@@ -309,6 +347,29 @@ class SessionController:
         db.session.query(Action).filter(
             and_(Action.quid == quid, Action.uuid == uuid)
         ).update({"user_answer": user_answer, "score": round(score, 3)})
+        db.session.commit()
+
+    def update_user_vec(
+        self,
+        phrase_id: str,
+        uuid: str,
+        slang: str,
+        score: float,
+        gamma: float = 0.5,
+        score_threshold: float = 0.75,
+    ):
+        """
+        Update user's vector
+        """
+        user_vec = db.session.query(UserVector).filter(UserVector.uuid == uuid)
+        phrase_vec = db.session.query(PhraseVector).filter(PhraseVector.id == phrase_id)
+
+        user_vec_ar = np.array(getattr(user_vec.scalar(), slang))
+        phrase_vec_ar = np.array(getattr(phrase_vec.scalar(), slang))
+
+        user_vec_ar += gamma * (score - score_threshold) * (user_vec_ar - phrase_vec_ar)
+
+        user_vec.update({slang: user_vec_ar})
         db.session.commit()
 
     def get_user_analysis(self, uuid: str) -> dict:

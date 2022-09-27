@@ -1,8 +1,11 @@
 import os
 import json
 import requests
+from retry import retry
 
-from typing import Tuple, Dict
+from requests.exceptions import ConnectionError
+
+from typing import List, Dict
 
 
 class RL:
@@ -11,7 +14,7 @@ class RL:
     def __init__(self, service_url: str):
         self.url = service_url
 
-    def get_pair(self, level: int, second_language: str, uuid: str) -> Dict:
+    def get_vec(self, prev_vecs: List) -> Dict:
         """
         Return response with new phrase id.
         """
@@ -20,14 +23,12 @@ class RL:
             requests.post(
                 self.url + endpoint,
                 json={
-                    "level": level,
-                    "second_language": second_language,
-                    "uuid": uuid,
+                    "prev_vecs": prev_vecs,
                 },
             ).text
         )
         if response["status"] == 200:
-            return {"phrase_id": response["phrase_id"]}
+            return response["next_vector"]
 
         raise Exception(response["traceback"])
 
@@ -76,6 +77,7 @@ class NLP:
                 },
             ).text
         )
+
         vector = [float(f) for f in response["vector"][1:-1].split()]
         if response["status"] == 200:
             return {"vector": vector}
@@ -88,11 +90,20 @@ class FacadeAPI:
         self.rl_service = RL(rl_url)
         self.nlp_service = NLP(nlp_url)
 
-    def rl_get_pair(self, level: int, second_language: str, uuid: str) -> Dict:
-        return self.rl_service.get_pair(level, second_language, uuid)
+    @retry(ConnectionError, tries=5, delay=5)
+    def rl_get_next_vec(self, prev_vecs: List) -> Dict:
+        if not self.rl_service:
+            raise TypeError("RL service url hasn't been defined")
+        return self.rl_service.get_vec(prev_vecs)
 
+    @retry(ConnectionError, tries=5, delay=5)
     def nlp_get_similarity(self, language: str, phrase1: str, phrase2: str) -> Dict:
+        if not self.nlp_service:
+            raise TypeError("NLP service url hasn't been defined")
         return self.nlp_service.get_similarity(language, phrase1, phrase2)
 
+    @retry(ConnectionError, tries=5, delay=5)
     def nlp_get_phrase_vector(self, language: str, phrase: str) -> Dict:
+        if not self.nlp_service:
+            raise TypeError("NLP service url hasn't been defined")
         return self.nlp_service.get_phrase_vector(language, phrase)

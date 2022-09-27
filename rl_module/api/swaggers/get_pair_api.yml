@@ -11,15 +11,12 @@ parameters:
     required: true
     schema:
       properties:
-        uuid:
-          type: string
-          description: The current user id
-        second_language:
-          type: string
-          description: Target language for user right now
-        level:
-          type: integer
-          description: The hardness level
+        prev_vecs:
+          type: list
+          description: Previously visited points
+        next_vecs:
+          type: list
+          description: Next possible points to visit
 
 responses:
   500:

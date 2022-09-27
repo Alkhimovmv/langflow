@@ -5,10 +5,7 @@ import pandas as pd
 from sklearn.neighbors import KDTree
 
 from utils.facade_api import FacadeAPI
-
-# set other services connection
-RL_SERVICE_URL = os.environ.get("RL_SERVICE_URL")
-NLP_SERVICE_URL = os.environ.get("NLP_SERVICE_URL")
+from utils.constants import RL_SERVICE_URL, NLP_SERVICE_URL
 
 facade_api = FacadeAPI(
     rl_url=RL_SERVICE_URL,
@@ -29,7 +26,7 @@ def get_phrase_links(
     """
     phrases_vecs_matrix = np.array(
         [
-            facade_api.nlp_get_phrase_vector("english", phrase)['vector']
+            facade_api.nlp_get_phrase_vector("english", phrase)["vector"]
             for phrase in phrases
         ]
     )

@@ -1,10 +1,9 @@
-import json
 import traceback
 
 from flask import request, jsonify
 from flasgger.utils import swag_from
 
-from . import api, env, agent
+from . import api, agent
 
 
 @api.route("/get_pair", methods=["POST"])
@@ -12,22 +11,15 @@ from . import api, env, agent
 def get_pair_api():
     try:
         req = request.get_json()
-        uuid = req["uuid"]
-        second_language = req["second_language"]
-        level = req["level"]
-
-        # load tables from base with current user state
-        current_state = env.get_user_state(uuid)
+        previous_questions_vecs = req["prev_vecs"]
 
         # choose question
-        phrase_id = agent(current_state, policy_type="e_greedy")
-
-        # phrase_id, reward, done, info = env.step(action)
+        next_vector = agent(previous_questions_vecs)
 
         return jsonify(
             {
                 "status": 200,
-                "phrase_id": phrase_id,
+                "next_vector": next_vector,
             }
         )
     except Exception as e:

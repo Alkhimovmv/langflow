@@ -1,5 +1,4 @@
 import os
-import json
 
 from flask import Flask
 from flask_cors import CORS
@@ -11,14 +10,12 @@ load_dotenv(".env")
 
 from api import api
 from dbase import db
+from utils.constants import POSTGRES_HOST, POSTGRES_PORT
 
 app = Flask(__name__)
 app.register_blueprint(api)
 Swagger(app)
 CORS(app)
-
-POSTGRES_HOST = os.getenv('POSTGRES_HOST', "localhost")
-POSTGRES_PORT = os.getenv('POSTGRES_PORT', "5432")
 
 app.config[
     "SQLALCHEMY_DATABASE_URI"

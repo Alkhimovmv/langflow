@@ -1,98 +1,102 @@
 version: '3.2'
 services:
-    backend:
-        build:
-          context: ./backend
-          dockerfile: Dockerfile
-        image: langflow_back:v0.1
-        container_name: langflow_application_back
-        depends_on:
-          - postgres
-        volumes:
-          - ./backend:/backend
-        ports:
-          - 6767:6767
-        networks:
-          lfnet:
-            ipv4_address: 10.192.1.21
-        command: python -u app.py
 
-    rl_module:
-        build:
-          context: ./rl_module
-          dockerfile: Dockerfile
-        image: langflow_rl:v0.1
-        container_name: langflow_application_rl
-        depends_on:
-          - backend
-        volumes:
-          - ./rl_module:/rl_module
-        ports:
-          - 6768:6768
-        networks:
-          lfnet:
-            ipv4_address: 10.192.1.22
-        command: python -u app.py
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: langflow@russia.win
+      PGADMIN_DEFAULT_PASSWORD: 123456
+    volumes:
+      - ./data/pgadmin:/var/lib/pgadmin/data
+    ports:
+      - 5050:80
+    depends_on:
+      - postgres
+    networks:
+      lfnet:
+        ipv4_address: 10.192.1.11
+    logging:
+      driver: none
 
-    nlp_module:
-        build:
-          context: ./nlp_module
-          dockerfile: Dockerfile
-        image: langflow_nlp:v0.1
-        container_name: langflow_application_nlp
-        volumes:
-          - ./nlp_module:/nlp_module
-        ports:
-          - 6769:6769
-        networks:
-          lfnet:
-            ipv4_address: 10.192.1.23
-        command: python -u app.py
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: langflow_back:v0.1
+    container_name: langflow_application_back
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/backend
+    ports:
+      - 6767:6767
+    networks:
+      lfnet:
+        ipv4_address: 10.192.1.21
+    command: python -u app.py
 
-    frontend:
-        build:
-          context: ./frontend
-          dockerfile: Dockerfile
-        image: langflow_front:v0.1
-        container_name: langflow_application_front
-        ports:
-          - 3000:3000
-        networks:
-          lfnet:
-            ipv4_address: 10.192.1.24
-        command: npm start
+  rl_module:
+    build:
+      context: ./rl_module
+      dockerfile: Dockerfile
+    image: langflow_rl:v0.1
+    container_name: langflow_application_rl
+    volumes:
+      - ./rl_module:/rl_module
+    ports:
+      - 6768:6768
+    networks:
+      lfnet:
+        ipv4_address: 10.192.1.22
+    command: python -u app.py
+    restart: always
 
-    postgres:
-      image: postgres
-      container_name: postgres
-      environment:
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: 123456
-      volumes:
-         - ./data/postgresql:/var/lib/postgresql/data
-      ports:
-        - 5432:5432
-      networks:
-        lfnet:
-          ipv4_address: 10.192.1.10
+  nlp_module:
+    build:
+      context: ./nlp_module
+      dockerfile: Dockerfile
+    image: langflow_nlp:v0.1
+    container_name: langflow_application_nlp
+    depends_on:
+      - backend
+      - postgres
+    volumes:
+      - ./nlp_module:/nlp_module
+    ports:
+      - 6769:6769
+    networks:
+      lfnet:
+        ipv4_address: 10.192.1.23
+    command: python -u app.py
+    restart: always
 
-    pgadmin:
-      image: dpage/pgadmin4
-      container_name: pgadmin
-      environment:
-        PGADMIN_DEFAULT_EMAIL: langflow@russia.win
-        PGADMIN_DEFAULT_PASSWORD: 123456
-      volumes:
-         - ./data/pgadmin:/var/lib/pgadmin/data
-      ports:
-        - 5050:80
-      depends_on:
-        - postgres
-      networks:
-        lfnet:
-          ipv4_address: 10.192.1.11
-      logging:
-        driver: none
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: langflow_front:v0.1
+    container_name: langflow_application_front
+    ports:
+      - 3000:3000
+    networks:
+      lfnet:
+        ipv4_address: 10.192.1.24
+    command: npm start
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    volumes:
+      - ./data/postgresql:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      lfnet:
+        ipv4_address: 10.192.1.10
 
 networks:
   lfnet:

@@ -1,0 +1,4 @@
+outs:
+- md5: b77fb62c527795cdd06344c4d1162f42
+  size: 129
+  path: onnx_model.yaml
