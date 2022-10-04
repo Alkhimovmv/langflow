@@ -25,6 +25,7 @@ export const TRANSLATIONS_GB = {
     russian:"Russian",
     french:"French",
     ukrainian:"Ukrainian",
+    serbian:"Serbian",
     difficulty:"Difficulty",
     alllevels:"All levels",
     easy:"Easy",

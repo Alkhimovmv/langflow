@@ -140,57 +140,59 @@ const GoPractice = (): JSX.Element => {
             <FormControl sx={{ m: '14px'}} className={classes.formControl}>
                 <InputLabel id="first-language-label" className={classes.inputLabel}>{t("from")}</InputLabel>
                 <Select
-                labelId="first-language-label"
-                id="first_language"
-                open={openFirstLanguage}
-                onClose={handleCloseFirstLanguage}
-                onOpen={handleOpenFirstLanguage}
-                label="First language"
-                onChange={handleChangeFirstLanguage}
-                value={firstLanguage}
-                className={classes.select}
+                    labelId="first-language-label"
+                    id="first_language"
+                    open={openFirstLanguage}
+                    onClose={handleCloseFirstLanguage}
+                    onOpen={handleOpenFirstLanguage}
+                    label="First language"
+                    onChange={handleChangeFirstLanguage}
+                    value={firstLanguage}
+                    className={classes.select}
                 >
-                <MenuItem className={classes.menuItem} value={'english'}>{t("english")}</MenuItem>
-                <MenuItem className={classes.menuItem} value={'russian'}>{t("russian")}</MenuItem>
-                <MenuItem className={classes.menuItem} value={'french'}>{t("french")}</MenuItem>
-                <MenuItem className={classes.menuItem} value={'ukrainian'}>{t("ukrainian")}</MenuItem>
+                    <MenuItem className={classes.menuItem} value={'english'}>{t("english")}</MenuItem>
+                    <MenuItem className={classes.menuItem} value={'russian'}>{t("russian")}</MenuItem>
+                    <MenuItem className={classes.menuItem} value={'french'}>{t("french")}</MenuItem>
+                    <MenuItem className={classes.menuItem} value={'ukrainian'}>{t("ukrainian")}</MenuItem>
+                    <MenuItem className={classes.menuItem} value={'Serbian'}>{t("serbian")}</MenuItem>
                 </Select>
             </FormControl>
             <FormControl sx={{ m: '14px' }} className={classes.formControl}>
                 <InputLabel id="second-language-label" className={classes.inputLabel}>{t("to")}</InputLabel>
                 <Select
-                labelId="second-language-label"
-                id="second_language"
-                open={openSecondLanguage}
-                onClose={handleCloseSecondLanguage}
-                onOpen={handleOpenSecondLanguage}
-                label="Second language"
-                onChange={handleChangeSecondLanguage}
-                value={secondLanguage}
-                className={classes.select}
+                    labelId="second-language-label"
+                    id="second_language"
+                    open={openSecondLanguage}
+                    onClose={handleCloseSecondLanguage}
+                    onOpen={handleOpenSecondLanguage}
+                    label="Second language"
+                    onChange={handleChangeSecondLanguage}
+                    value={secondLanguage}
+                    className={classes.select}
                 >
-                <MenuItem className={classes.menuItem} value={'english'}>{t("english")}</MenuItem>
-                <MenuItem className={classes.menuItem} value={'russian'}>{t("russian")}</MenuItem>
-                <MenuItem className={classes.menuItem} value={'french'}>{t("french")}</MenuItem>
-                <MenuItem className={classes.menuItem} value={'ukrainian'}>{t("ukrainian")}</MenuItem>
+                    <MenuItem className={classes.menuItem} value={'english'}>{t("english")}</MenuItem>
+                    <MenuItem className={classes.menuItem} value={'russian'}>{t("russian")}</MenuItem>
+                    <MenuItem className={classes.menuItem} value={'french'}>{t("french")}</MenuItem>
+                    <MenuItem className={classes.menuItem} value={'ukrainian'}>{t("ukrainian")}</MenuItem>
+                    <MenuItem className={classes.menuItem} value={'Serbian'}>{t("serbian")}</MenuItem>
                 </Select>
             </FormControl>
             <FormControl sx={{ m: '14px' }} className={classes.formControl}>
                 <InputLabel id="level-label" className={classes.inputLabel}>{t("difficulty")}</InputLabel>
                 <Select
-                labelId="level-label"
-                id="level"
-                open={openLevel}
-                onClose={handleCloseLevel}
-                onOpen={handleOpenLevel}
-                value={level}
-                label="Level"
-                onChange={handleChangeLevel}
-                className={classes.select}
+                    labelId="level-label"
+                    id="level"
+                    open={openLevel}
+                    onClose={handleCloseLevel}
+                    onOpen={handleOpenLevel}
+                    value={level}
+                    label="Level"
+                    onChange={handleChangeLevel}
+                    className={classes.select}
                 >
-                <MenuItem className={classes.menuItem} value={0}>{t("alllevels")}</MenuItem>
-                <MenuItem className={classes.menuItem} value={1}>{t("easy")}</MenuItem>
-                <MenuItem className={classes.menuItem} value={2}>{t("medium")}</MenuItem>
+                    <MenuItem className={classes.menuItem} value={0}>{t("alllevels")}</MenuItem>
+                    <MenuItem className={classes.menuItem} value={1}>{t("easy")}</MenuItem>
+                    <MenuItem className={classes.menuItem} value={2}>{t("medium")}</MenuItem>
                 </Select>
             </FormControl>
             <Button type="submit" variant="contained" className={classes.button} onClick={handleClick}>{t("go")}</Button>

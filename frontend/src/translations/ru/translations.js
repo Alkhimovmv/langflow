@@ -25,6 +25,7 @@ export const TRANSLATIONS_RU = {
     russian:"Русский",
     french:"Французский",
     ukrainian:"Украинский",
+    serbian:"Сербский",
     difficulty:"Сложность",
     alllevels:"Все уровни",
     easy:"Легкий",

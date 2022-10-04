@@ -39,8 +39,8 @@ const Header = (): JSX.Element => {
     }
     
     return (
-        <Navbar style={{display: 'contents'}} fixed="top">
-            <Container className="p-2">
+        <Navbar sticky="top" bg='light'>
+            <Container className="py-2 px-4">
                 <a className='header_logo-img' href="/">
                     <img
                         src={logo}
@@ -53,8 +53,8 @@ const Header = (): JSX.Element => {
                 <ReactFlagsSelect
                     selected={language}
                     onSelect={(code: string) => handleOnclick(code)}
-                    countries={["RU", "GB", "FR", "UA"]}
-                    customLabels={{ RU: "RU", GB: "EN", FR: "FR", UA: "UA" }}
+                    countries={["RU", "GB", "FR", "UA", "RS"]}
+                    customLabels={{ RU: "RU", GB: "EN", FR: "FR", UA: "UA", RS: "RS" }}
                     placeholder="Select Language"    
                     className="header-flags"        
                 />
