@@ -29,6 +29,15 @@ facade_api = FacadeAPI(
 )
 
 
+LANGUAGES = [
+    "english",
+    "russian",
+    "ukrainian",
+    "french",
+    "serbian",
+]
+
+
 class DbController:
     """
     Allows to perform operations with the project database.
@@ -52,12 +61,7 @@ class DbController:
         :param phrases: pandas dataframe to upload to base
         """
         # check needed columns
-        assert all(
-            [
-                col in phrases.columns
-                for col in ["level", "english", "russian", "ukrainian", "french"]
-            ]
-        )
+        assert all([col in phrases.columns for col in ["level"] + LANGUAGES])
 
         # add index column for query adressing
         phrases["id"] = phrases.reset_index()["index"] + 1
@@ -74,7 +78,7 @@ class DbController:
 
         # get vectors
         phrases_vec = phrases[["id"]]
-        for language in ["english", "russian", "ukrainian", "french"]:
+        for language in LANGUAGES:
             phrases_vec[language] = phrases[language].apply(
                 lambda phrase: facade_api.nlp_get_phrase_vector(language, phrase)[
                     "vector"
@@ -85,13 +89,14 @@ class DbController:
         db.session.query(PhraseVector).delete()
         db.session.commit()
 
-        for index, row in phrases_vec.iterrows():
+        for _, row in phrases_vec.iterrows():
             phrase_vec = PhraseVector(
                 id=row["id"],
                 english=row["english"],
                 french=row["french"],
                 russian=row["russian"],
                 ukrainian=row["ukrainian"],
+                serbian=row["serbian"],
             )
             db.session.add(phrase_vec)
             db.session.commit()

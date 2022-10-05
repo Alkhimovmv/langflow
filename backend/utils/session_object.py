@@ -98,6 +98,7 @@ class SessionController:
             french=np.random.rand(8),
             russian=np.random.rand(8),
             ukrainian=np.random.rand(8),
+            serbian=np.random.rand(8),
         )
         db.session.add(user_vec)
         db.session.commit()
@@ -136,6 +137,7 @@ class SessionController:
                 french=np.random.rand(8),
                 russian=np.random.rand(8),
                 ukrainian=np.random.rand(8),
+                serbian=np.random.rand(8),
             )
             db.session.add(user_vec)
             db.session.commit()
