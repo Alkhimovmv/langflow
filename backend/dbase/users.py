@@ -56,13 +56,15 @@ class UserVector(db.Model):
     french = db.Column(db.ARRAY(db.Float), nullable=False)
     russian = db.Column(db.ARRAY(db.Float), nullable=False)
     ukrainian = db.Column(db.ARRAY(db.Float), nullable=False)
+    serbian = db.Column(db.ARRAY(db.Float), nullable=False)
 
-    def __init__(self, uuid, english, french, russian, ukrainian):
+    def __init__(self, uuid, english, french, russian, ukrainian, serbian):
         self.uuid = uuid
         self.english = english
         self.french = french
         self.russian = russian
         self.ukrainian = ukrainian
+        self.serbian = serbian
 
     def __repr__(self):
         repr = f"""[{self.uuid}]
@@ -70,5 +72,6 @@ class UserVector(db.Model):
         french: {self.french};
         russian: {self.russian};
         ukrainian: {self.ukrainian};
+        serbian: {self.serbian};
         """
         return
