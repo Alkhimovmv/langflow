@@ -1,4 +1,3 @@
-import uuid
 import datetime
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -74,4 +73,4 @@ class UserVector(db.Model):
         ukrainian: {self.ukrainian};
         serbian: {self.serbian};
         """
-        return
+        return repr
