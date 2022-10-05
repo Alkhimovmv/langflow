@@ -154,7 +154,7 @@ const GoPractice = (): JSX.Element => {
                     <MenuItem className={classes.menuItem} value={'russian'}>{t("russian")}</MenuItem>
                     <MenuItem className={classes.menuItem} value={'french'}>{t("french")}</MenuItem>
                     <MenuItem className={classes.menuItem} value={'ukrainian'}>{t("ukrainian")}</MenuItem>
-                    <MenuItem className={classes.menuItem} value={'Serbian'}>{t("serbian")}</MenuItem>
+                    <MenuItem className={classes.menuItem} value={'serbian'}>{t("serbian")}</MenuItem>
                 </Select>
             </FormControl>
             <FormControl sx={{ m: '14px' }} className={classes.formControl}>
@@ -174,7 +174,7 @@ const GoPractice = (): JSX.Element => {
                     <MenuItem className={classes.menuItem} value={'russian'}>{t("russian")}</MenuItem>
                     <MenuItem className={classes.menuItem} value={'french'}>{t("french")}</MenuItem>
                     <MenuItem className={classes.menuItem} value={'ukrainian'}>{t("ukrainian")}</MenuItem>
-                    <MenuItem className={classes.menuItem} value={'Serbian'}>{t("serbian")}</MenuItem>
+                    <MenuItem className={classes.menuItem} value={'serbian'}>{t("serbian")}</MenuItem>
                 </Select>
             </FormControl>
             <FormControl sx={{ m: '14px' }} className={classes.formControl}>
